@@ -49,7 +49,8 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "test": "truffle test",
+    "start-node": "hardhat node",
+    "create-kcc-staking-dev-env": "hardhat run --network localhost scripts/dev-env/main.ts",
     "lint": "solhint 'contracts/**/*.sol'"
   },
   "author": "",
