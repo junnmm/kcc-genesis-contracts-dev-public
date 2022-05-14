@@ -93,7 +93,8 @@ const config: HardhatUserConfig = {
         count: 100,
         accountsBalance: BigNumber.from(10).pow(25).toString()
       },
-      hardfork: "berlin" // kcc 
+      hardfork: "berlin", // kcc 
+      chainId: 1337
     },
     devnet:{
       url: process.env.DEVNET_RPC || "",
