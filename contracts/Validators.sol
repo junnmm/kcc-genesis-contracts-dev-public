@@ -464,7 +464,9 @@ contract Validators is
             uint256 _totalBallot = 0;
             for (uint8 i = 0; i < activeValidators.length; i++) {
                 PoolInfo storage pool = poolInfos[activeValidators[i]];
-                if(pool.selfBallots >= minSelfBallots){ // only taking validator with enough margin into accounts
+
+                // Distribute block rewards only to validators that have enough ballots and are enabled
+                if (pool.selfBallots >= minSelfBallots && pool.enabled) {
                     _totalBallot = _totalBallot.add(poolInfos[activeValidators[i]].suppliedBallots);
                 }
             }
@@ -476,7 +478,7 @@ contract Validators is
                 for (uint8 i = 0; i < activeValidators.length; i++) {
                     PoolInfo storage pool = poolInfos[activeValidators[i]];
 
-                    if(pool.selfBallots < minSelfBallots){
+                    if (pool.selfBallots < minSelfBallots || !pool.enabled) {
                         continue;
                     }
 
