@@ -260,6 +260,28 @@ describe("punish contract", function () {
 
   });
 
+  it('clean punish records', async function () {
+    // deployer as the miner of the next block
+    await setCoinbase(deployer.address);
+    punish = punish.connect(deployer);
+
+    const removeThreshold = (await punish.removeThreshold()).toNumber();
+
+    // punish 1 less than remove threshold
+    let punishCount = removeThreshold - 1;
+    for (let i = 1; i <= punishCount; i++) {
+      await punish.punish(someone.address);
+    }
+    expect(await punish.getPunishRecord(someone.address)).to.be.equal(punishCount);
+
+    expect((await punish.getPunishValidatorsLen())).to.be.equal(1);
+
+
+    await punish.punish(someone.address);
+
+    expect((await punish.getPunishValidatorsLen())).to.be.equal(0);
+
+  });
 
 
 }); // end of describe 
