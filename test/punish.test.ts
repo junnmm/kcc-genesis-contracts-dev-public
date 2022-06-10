@@ -41,6 +41,7 @@ describe("punish contract", function () {
   let deployer: SignerWithAddress; // the deployer 
   let admin: SignerWithAddress; // the admin  
   let someone: SignerWithAddress; // someone's address 
+  let other: SignerWithAddress; // someone's address
 
   const epoch = 100;
 
@@ -53,6 +54,7 @@ describe("punish contract", function () {
     deployer = signers[0];
     admin = signers[1];
     someone = signers[2];
+    other = signers[3];
 
     const factory = await ethers.getContractFactory("Punish", deployer);
     punish = await factory.deploy();
@@ -272,14 +274,15 @@ describe("punish contract", function () {
     for (let i = 1; i <= punishCount; i++) {
       await punish.punish(someone.address);
     }
+    await punish.punish(other.address);
+
     expect(await punish.getPunishRecord(someone.address)).to.be.equal(punishCount);
 
-    expect((await punish.getPunishValidatorsLen())).to.be.equal(1);
-
+    expect((await punish.getPunishValidatorsLen())).to.be.equal(2);
 
     await punish.punish(someone.address);
 
-    expect((await punish.getPunishValidatorsLen())).to.be.equal(0);
+    expect((await punish.getPunishValidatorsLen())).to.be.equal(1);
 
   });
 
