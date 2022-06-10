@@ -413,7 +413,7 @@ contract Validators is
         // @audit PVE001-2 : only the manager of the validator can change the fee shares 
         PoolInfo storage pool = poolInfos[_val];
         require(msg.sender == pool.manager, "only manager can change it");
-        require(!pool.enabled, "pool does not enabled");
+        require(pool.enabled, "pool is not enabled");
         require(pool.validator != address(0), "Pool does not exist");
         require(
             _shares <= MAX_FEE_SHARES,
