@@ -161,7 +161,7 @@ contract Validators is
     ) external initializer {
         require(
             _validators.length == _feeShares.length && _validators.length == _managers.length && _validators.length > 0,
-            "invalidate validator and it's manager"
+            "invalid validator and it's manager"
         );
 
         revokeLockingDuration = 3 days;
