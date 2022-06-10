@@ -300,8 +300,29 @@ describe("validators: test voter claim reward", function () {
 
 
 
-    it("revoke vote", async function () {
+    it("vote with 1.5 KCS", async function () {
 
+        // validator and voter to play with 
+        const [val,] = initialValidators;
+        const [user,] = voters;
+
+        // the balance before voting 
+        const preBalance = await user.getBalance();
+
+        await validatorContract.connect(user).vote(val.address,{
+            value: ethers.utils.parseEther("1.5"),
+            gasPrice: BigNumber.from(0), // hack with 0 gas price 
+        });
+
+        const afterBalance = await user.getBalance();
+
+        expect(
+            preBalance.sub(afterBalance),
+            "0.5 KCS should be returned"
+        ).eq(
+            ethers.utils.parseEther("1.0")
+        )
+        
     });
 
 });
