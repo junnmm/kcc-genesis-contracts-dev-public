@@ -1,10 +1,9 @@
 import { expect } from "chai";
-import { ethers, network } from "hardhat";
+import { ethers } from "hardhat";
 import { ValidatorMockForPunish, Punish, CallPunishMultipleTimes } from "../typechain";
 import { mineBlocks, setCoinbase } from "./helpers";
 import type { ContractReceipt } from "ethers";
 import { CallPunishEvent } from "../typechain/ValidatorMockForPunish"
-import { some } from "underscore";
 
 
 type SignerWithAddress = Awaited<ReturnType<typeof ethers["getSigner"]>>;
