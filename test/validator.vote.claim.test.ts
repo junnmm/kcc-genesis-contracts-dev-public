@@ -423,5 +423,51 @@ describe("validators: test voter claim reward", function () {
     });
 
 
+    it("automatically withdraw previous reovoked when revoke", async()=>{
+
+
+        // validator and voter to play with 
+        const [val,] = initialValidators;
+        const [user,miner] = voters;
+
+        // vote 2 KCS 
+        await validatorContract.connect(user).vote(val.address,{
+            value: ethers.utils.parseEther("2"),
+            gasPrice: BigNumber.from(0), // hack with 0 gas price 
+        });
+
+        // revoke 1 KCS 
+        await validatorContract.connect(user).revokeVote(val.address, 1,{
+                gasPrice: BigNumber.from(0),
+        });
+
+        // wait for 3 days 
+        await mineBlocks(3 * 24 * 60 * 60 / 3 + 1);
+
+        expect(
+            await validatorContract.connect(user).isWithdrawable(user.address,val.address),
+        ).equal(
+            true
+        )
+
+        const preBalance =await user.getBalance();
+
+        // reovoke another KCS 
+        await validatorContract.connect(user).revokeVote(val.address,1,
+            {
+                gasPrice: 0
+            }
+        )
+
+        const afterBalance = await user.getBalance();
+
+        expect(
+            afterBalance.sub(preBalance)
+        ).eq(
+            ethers.constants.WeiPerEther
+        );
+
+    });
+
 
 });
