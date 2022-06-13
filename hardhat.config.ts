@@ -11,6 +11,7 @@ import { fstatSync, mkdirSync, writeFileSync } from "fs";
 import {join} from "path";
 import keyethereum from "keythereum";
 import  {readFileSync}  from 'fs';
+import 'hardhat-storage-layout';
 
 
 dotenv.config();
