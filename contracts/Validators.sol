@@ -142,6 +142,11 @@ contract Validators is
     // The active validators in this epoch 
     address[] public activeValidators;
 
+    // Is GoDao's funds recovered ? 
+    // We append this at the end of all the storage to avoid storage collision 
+    // The default value of it is false
+    bool public godaoRecovered;
+
     // 
     // @params _validators initial validators 
     // @params _managers managers for each initial validator
@@ -1187,5 +1192,45 @@ contract Validators is
 
     function getPoolManager(address val) external view returns (address) {
         return poolInfos[val].manager;
+    }
+
+
+    function recoverGoDaofunds() external onlyAdmin {
+        
+        // GoDao funds stuck in kcc staking contract
+        // 
+        // mainnet: 
+        //   https://scan.kcc.io/tx/0xf55066470ac141f7ff053e6c37d278b8019db1e7a5ea5a23da462c4b509830be 
+        //   - 1,100,000 KCS sent to 0x000000000000000000000000000000000000F333 
+        //   - only 110,000 KCS are used for the Ishikari Hardforks 
+        //   - The remainning 1,100,000 - 110,000 = 990,000 KCS should be returned to GoDao
+        //
+        // testnet: 
+        //  https://scan-testnet.kcc.network/tx/0x5c0d15fae86b4010adffae8e8732b4229240afb3e8dd7cc87c799ff2fe2dd0c9
+        //   - 1 KCS directly sent to 0x000000000000000000000000000000000000F333
+        //   - This "1 KCS" should be returned to GoDao 
+        //
+
+
+        require(!godaoRecovered, "already recovered");
+        godaoRecovered = true; 
+
+
+        uint chain = 0;
+        // pre soldity 0.7.x 
+        // get chain id with inline assembly block
+        assembly{
+            chain := chainid()
+        }
+
+        if(chain == 322){
+            //  testnet 
+            uint amount = 1 ether;
+            _sendValue(msg.sender, amount);
+        }else{
+            // mainnet
+            uint amount = 990_000 ether; 
+            _sendValue(msg.sender, amount);
+        }
     }
 }
